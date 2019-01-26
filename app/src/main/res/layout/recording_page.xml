@@ -40,11 +40,18 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/stop"
-                android:layout_width="match_parent"
+                android:id="@+id/recordAgain"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:onClick="stop"
-                android:text="Stop" />
+                android:onClick="recordAgain"
+                android:text="record again" />
+
+            <Button
+                android:id="@+id/result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="result"
+                android:text="see result" />
         </LinearLayout>
 
     </LinearLayout>
