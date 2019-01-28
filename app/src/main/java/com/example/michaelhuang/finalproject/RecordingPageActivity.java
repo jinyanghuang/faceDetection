@@ -32,6 +32,7 @@ public class RecordingPageActivity extends AppCompatActivity {
 
     public void result(View view){
         Intent resultPage = new Intent(this, ResultActivity.class);
+        TempDatabase.addlist(videoUri);
         resultPage.putExtra("videoUri",videoUri.toString());
         startActivity(resultPage);
     }
