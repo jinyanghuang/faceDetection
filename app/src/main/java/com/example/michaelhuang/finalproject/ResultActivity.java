@@ -29,7 +29,7 @@ public class ResultActivity extends AppCompatActivity {
             frameList.add(bitmap);
         }
 
-        ImageListAdapter imageAdapter = new ImageListAdapter(this,R.layout.image_list_view,frameList);
+        ImageListAdapter imageAdapter = new ImageListAdapter(this,R.layout.image_list_view,videoList);
         ListView listView = findViewById(R.id.list);
         listView.setAdapter(imageAdapter);
     }
