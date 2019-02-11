@@ -10,6 +10,7 @@
         android:id="@+id/imageViewList"
         android:layout_width="100dp"
         android:layout_height="200dp"
+        android:layout_weight="1"
         tools:srcCompat="@tools:sample/avatars" />
 
     <ImageView

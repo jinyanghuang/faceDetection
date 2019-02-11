@@ -3,6 +3,7 @@
     package="com.example.michaelhuang.finalproject">
 
     <uses-permission android:name="android.permission.CAMERA"></uses-permission>
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:allowBackup="true"

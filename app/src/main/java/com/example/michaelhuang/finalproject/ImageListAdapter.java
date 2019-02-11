@@ -37,8 +37,6 @@ public class ImageListAdapter extends ArrayAdapter<Uri> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
-//        LayoutInflater inflater = mContext.getLayoutInflater();
-//        View returnView = inflater.inflate(R.layout.result_page,null);
         View returnView = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
 
         Uri videoUri = mVideoList.get(position);
@@ -47,23 +45,7 @@ public class ImageListAdapter extends ArrayAdapter<Uri> {
 
         String duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
         long durationInMillisec = Long.parseLong(duration );
-        int durationInSec = (int)(durationInMillisec/1000);
-
-        ArrayList<Bitmap> frameList;
-        frameList = new ArrayList<Bitmap>();
-//        for(int i=0;i<3;i++) {
-//            Bitmap bitmap = retriever.getFrameAtTime(i*1000000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-//            frameList.add(bitmap);
-//        }
-//
-//        ImageView imageView = returnView.findViewById(R.id.imageViewList);
-//        imageView.setImageBitmap(frameList.get(0));
-//
-//        ImageView imageView2 = returnView.findViewById(R.id.imageView2);
-//        imageView2.setImageBitmap(frameList.get(1));
-//
-//        ImageView imageView3 = returnView.findViewById(R.id.imageView3);
-//        imageView3.setImageBitmap(frameList.get(2));
+        int durationInSec = (int)(durationInMillisec/250);
 
         FaceDetector detector = new FaceDetector.Builder(getContext())
                 .setLandmarkType(FaceDetector.ALL_LANDMARKS)
@@ -71,32 +53,63 @@ public class ImageListAdapter extends ArrayAdapter<Uri> {
                 .setMode(FaceDetector.FAST_MODE)
                 .build();
 
-        Bitmap selectedFace = retriever.getFrameAtTime(0*1000000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+        Bitmap selectedFrontFace = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+        Bitmap selectedLeftFace = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+        Bitmap selectedRightFace = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+
         float dis=100;
-        for(int i=0; i<durationInSec; i++){
-            Bitmap bitmap = retriever.getFrameAtTime(i*1000000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+        boolean oneSide = false;
+        for(int i=0; i<durationInSec-1; i++){
+            Bitmap bitmap = retriever.getFrameAtTime(i*250000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
             Frame frame = new Frame.Builder().setBitmap(bitmap).build();
 
             SparseArray<Face> faces = detector.detect(frame);
 
-            if(bitmap != null && faces!=null){
-
+            if(bitmap != null && faces.size()!=0){
+                System.out.println("hehehere");
                 Face face = faces.valueAt(0);
                 List<Landmark> landmarks = face.getLandmarks();
-                float leftFaceLandmark = landmarks.get(4).getPosition().x ;
-                float noseLandmark = landmarks.get(2).getPosition().x ;
-                float rightLandmark = landmarks.get(3).getPosition().x;
-                float diff = Math.abs((noseLandmark - leftFaceLandmark)-(rightLandmark - noseLandmark));
-                if (diff < dis){
-                    selectedFace = bitmap;
-                    dis = diff;
+                if (landmarks.size() == 8) {
+                    float leftFaceLandmark = landmarks.get(4).getPosition().x;
+                    float noseLandmark = landmarks.get(2).getPosition().x;
+                    float rightLandmark = landmarks.get(3).getPosition().x;
+                    float diff = Math.abs((noseLandmark - leftFaceLandmark) - (rightLandmark - noseLandmark));
+
+                    if (diff < dis) {
+                        selectedFrontFace = bitmap;
+                        dis = diff;
+                    }
+                    System.out.println(dis);
+
                 }
-                System.out.println(dis);
             }
+
+            Bitmap bitmap2 = retriever.getFrameAtTime((i+1)*250000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            Frame frame2 = new Frame.Builder().setBitmap(bitmap2).build();
+
+            SparseArray<Face> faces2 = detector.detect(frame2);
+
+            if(bitmap != null ){
+                if(faces.size()!=0 && faces2.size()==0 && !oneSide){
+                    selectedLeftFace = bitmap2;
+                    oneSide = true;
+                    System.out.println("left face selected");
+                }
+                if(faces.size()!=0 && faces2.size()==0 && oneSide){
+                    selectedRightFace = bitmap2;
+                    System.out.println("right face selected");
+                }
+            }
+
         }
 
         ImageView imageView = returnView.findViewById(R.id.imageViewList);
-        imageView.setImageBitmap(selectedFace);
+        imageView.setImageBitmap(selectedFrontFace);
+        ImageView imageView2 = returnView.findViewById(R.id.imageView2);
+        imageView2.setImageBitmap(selectedRightFace);
+        ImageView imageView3 = returnView.findViewById(R.id.imageView3);
+        imageView3.setImageBitmap(selectedLeftFace);
+
 
 
         return returnView;
