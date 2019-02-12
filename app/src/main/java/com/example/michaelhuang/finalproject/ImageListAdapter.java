@@ -22,16 +22,17 @@ import com.google.android.gms.vision.face.Landmark;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImageListAdapter extends ArrayAdapter<Uri> {
+public class ImageListAdapter extends ArrayAdapter<Bitmap[]> {
     private Activity mContext;
     private ArrayList<Uri> mVideoList;
+    private ArrayList<Bitmap[]> mImageList;
     private int resourceId;
 
-    public ImageListAdapter(Activity context, int resource, ArrayList<Uri> videoList){
-        super(context,resource,videoList);
+    public ImageListAdapter(Activity context, int resource, ArrayList<Bitmap[]> imageList){
+        super(context,resource,imageList);
         mContext = context;
         resourceId = resource;
-        mVideoList = videoList;
+        mImageList = imageList;
     }
 
     @NonNull
@@ -39,76 +40,14 @@ public class ImageListAdapter extends ArrayAdapter<Uri> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
         View returnView = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
 
-        Uri videoUri = mVideoList.get(position);
-        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-        retriever.setDataSource(mContext,videoUri);
-
-        String duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        long durationInMillisec = Long.parseLong(duration );
-        int durationInSec = (int)(durationInMillisec/250);
-
-        FaceDetector detector = new FaceDetector.Builder(getContext())
-                .setLandmarkType(FaceDetector.ALL_LANDMARKS)
-                .setTrackingEnabled(false)
-                .setMode(FaceDetector.FAST_MODE)
-                .build();
-
-        Bitmap selectedFrontFace = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-        Bitmap selectedLeftFace = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-        Bitmap selectedRightFace = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-
-        float dis=100;
-        boolean oneSide = false;
-        for(int i=0; i<durationInSec-1; i++){
-            Bitmap bitmap = retriever.getFrameAtTime(i*250000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-            Frame frame = new Frame.Builder().setBitmap(bitmap).build();
-
-            SparseArray<Face> faces = detector.detect(frame);
-
-            if(bitmap != null && faces.size()!=0){
-                System.out.println("hehehere");
-                Face face = faces.valueAt(0);
-                List<Landmark> landmarks = face.getLandmarks();
-                if (landmarks.size() == 8) {
-                    float leftFaceLandmark = landmarks.get(4).getPosition().x;
-                    float noseLandmark = landmarks.get(2).getPosition().x;
-                    float rightLandmark = landmarks.get(3).getPosition().x;
-                    float diff = Math.abs((noseLandmark - leftFaceLandmark) - (rightLandmark - noseLandmark));
-
-                    if (diff < dis) {
-                        selectedFrontFace = bitmap;
-                        dis = diff;
-                    }
-                    System.out.println(dis);
-
-                }
-            }
-
-            Bitmap bitmap2 = retriever.getFrameAtTime((i+1)*250000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-            Frame frame2 = new Frame.Builder().setBitmap(bitmap2).build();
-
-            SparseArray<Face> faces2 = detector.detect(frame2);
-
-            if(bitmap != null ){
-                if(faces.size()!=0 && faces2.size()==0 && !oneSide){
-                    selectedLeftFace = bitmap2;
-                    oneSide = true;
-                    System.out.println("left face selected");
-                }
-                if(faces.size()!=0 && faces2.size()==0 && oneSide){
-                    selectedRightFace = bitmap2;
-                    System.out.println("right face selected");
-                }
-            }
-
-        }
+        Bitmap[] bitmaps = mImageList.get(position);
 
         ImageView imageView = returnView.findViewById(R.id.imageViewList);
-        imageView.setImageBitmap(selectedFrontFace);
+        imageView.setImageBitmap(bitmaps[0]);
         ImageView imageView2 = returnView.findViewById(R.id.imageView2);
-        imageView2.setImageBitmap(selectedRightFace);
+        imageView2.setImageBitmap(bitmaps[1]);
         ImageView imageView3 = returnView.findViewById(R.id.imageView3);
-        imageView3.setImageBitmap(selectedLeftFace);
+        imageView3.setImageBitmap(bitmaps[2]);
 
 
 

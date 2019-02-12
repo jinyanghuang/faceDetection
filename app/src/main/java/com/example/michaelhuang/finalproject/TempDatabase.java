@@ -1,13 +1,15 @@
 package com.example.michaelhuang.finalproject;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 import java.util.ArrayList;
 
 public class TempDatabase {
-    private static ArrayList<Uri> list = new ArrayList<Uri>();
 
-    public static void addlist(Uri rec) {list.add(rec);}
+    private static ArrayList<Bitmap[]> imageList = new ArrayList<Bitmap[]>();
 
-    public static ArrayList<Uri> getList() {return list;}
+    public static void addlist(Bitmap[] bitmaps){imageList.add(bitmaps);}
+
+    public static ArrayList<Bitmap[]> getImageList() {return imageList;}
 }
