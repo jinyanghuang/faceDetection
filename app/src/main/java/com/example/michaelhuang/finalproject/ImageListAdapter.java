@@ -40,7 +40,9 @@ public class ImageListAdapter extends ArrayAdapter<Bitmap[]> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent){
         View returnView = LayoutInflater.from(getContext()).inflate(resourceId,parent,false);
 
-        Bitmap[] bitmaps = mImageList.get(position);
+        int lengthOfBitmap = mImageList.size();
+        int inversePosition = lengthOfBitmap - position -1; //show the latest image on the top
+        Bitmap[] bitmaps = mImageList.get(inversePosition);
 
         ImageView imageView = returnView.findViewById(R.id.imageViewList);
         imageView.setImageBitmap(bitmaps[0]);

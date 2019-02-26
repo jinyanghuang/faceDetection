@@ -96,6 +96,7 @@ public class RecordingPageActivity extends AppCompatActivity {
 
             float dis=100;
             boolean oneSide = false;
+            System.out.println("total iterations "+durationInSec);
             for(int i=0; i<durationInSec-1; i++){
                 Bitmap bitmap = retriever.getFrameAtTime(i*250000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
                 Frame frame = new Frame.Builder().setBitmap(bitmap).build();
@@ -103,7 +104,7 @@ public class RecordingPageActivity extends AppCompatActivity {
                 SparseArray<Face> faces = detector.detect(frame);
 
                 if(bitmap != null && faces.size()!=0){
-                    System.out.println("hehehere");
+                    System.out.println("face is detected");
                     Face face = faces.valueAt(0);
                     List<Landmark> landmarks = face.getLandmarks();
                     if (landmarks.size() == 8) {
@@ -116,6 +117,7 @@ public class RecordingPageActivity extends AppCompatActivity {
                             selectedFrontFace = bitmap;
                             dis = diff;
                         }
+                        System.out.println("all 8 landmarks are detected");
                         System.out.println(dis);
 
                     }
