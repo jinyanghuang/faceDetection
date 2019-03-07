@@ -42,8 +42,8 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:layout_centerInParent="true"
-                android:layout_marginTop="20dp"
-                android:visibility="gone" />
+                android:layout_marginTop="20dp"/>
+                <!--android:visibility="gone" />-->
 
         </RelativeLayout>
 
@@ -58,13 +58,6 @@
                 android:layout_height="wrap_content"
                 android:onClick="recordAgain"
                 android:text="record again" />
-
-            <Button
-                android:id="@+id/result"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="result"
-                android:text="see result" />
 
         </LinearLayout>
 

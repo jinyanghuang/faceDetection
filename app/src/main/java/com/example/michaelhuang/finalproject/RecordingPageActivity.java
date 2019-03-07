@@ -42,16 +42,10 @@ public class RecordingPageActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(requestCode==VIDEO_REQUEST && resultCode ==RESULT_OK){
             videoUri = data.getData();
+            new SelectFace().execute();
         }
     }
 
-    public void result(View view){
-//        Intent resultPage = new Intent(this, ResultActivity.class);
-////        resultPage.putExtra("videoUri",videoUri.toString());
-////        startActivity(resultPage);
-        pgsBar.setVisibility(view.VISIBLE);
-        new SelectFace().execute();
-    }
 
     public void recordAgain(View view){
         Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
