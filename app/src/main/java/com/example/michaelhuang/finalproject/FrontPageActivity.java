@@ -19,6 +19,7 @@ public class FrontPageActivity extends AppCompatActivity {
     private int mCameraId = 0;
     private FrameLayout mPreviewLayout;
     final private int REQUEST_CODE_CAMERA = 1;
+    private final int CONTINUOUS_SHOOTING_TIMES = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,8 +95,10 @@ public class FrontPageActivity extends AppCompatActivity {
     }
 
     public void start(View view){
-        Intent recordPage = new Intent(this, RecordingPageActivity.class);
-        startActivity(recordPage);
+        mCamPreview.continuousShooting(CONTINUOUS_SHOOTING_TIMES);
+//        Intent recordPage = new Intent(this, RecordingPageActivity.class);
+//        startActivity(recordPage);
+
     }
 
 }
