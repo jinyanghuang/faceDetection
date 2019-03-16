@@ -16,6 +16,10 @@ import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.face.Face;
 import com.google.android.gms.vision.face.FaceDetector;
 import com.google.android.gms.vision.face.Landmark;
+import com.google.firebase.ml.vision.FirebaseVision;
+import com.google.firebase.ml.vision.common.FirebaseVisionImage;
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetector;
+import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions;
 
 import java.util.List;
 
@@ -78,6 +82,18 @@ public class RecordingPageActivity extends AppCompatActivity {
             long durationInMillisec = Long.parseLong(duration );
             int durationInSec = (int)(durationInMillisec/250);
 
+            FirebaseVisionFaceDetectorOptions highAccuracyOpts =
+                    new FirebaseVisionFaceDetectorOptions.Builder()
+                            .setPerformanceMode(FirebaseVisionFaceDetectorOptions.ACCURATE)
+                            .setLandmarkMode(FirebaseVisionFaceDetectorOptions.ALL_LANDMARKS)
+                            .setClassificationMode(FirebaseVisionFaceDetectorOptions.ALL_CLASSIFICATIONS)
+                            .build();
+
+            FirebaseVisionFaceDetector detector2 = FirebaseVision.getInstance()
+                    .getVisionFaceDetector(highAccuracyOpts);
+
+
+
             FaceDetector detector = new FaceDetector.Builder(getApplicationContext())
                     .setLandmarkType(FaceDetector.ALL_LANDMARKS)
                     .setTrackingEnabled(false)
@@ -85,19 +101,24 @@ public class RecordingPageActivity extends AppCompatActivity {
                     .build();
 
             Bitmap selectedFrontFace = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-            Bitmap selectedLeftFace = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-            Bitmap selectedRightFace = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+            Bitmap selectedLeftFace = selectedFrontFace;
+            Bitmap selectedRightFace = selectedFrontFace;
+            Bitmap currentBitmap;
+            Bitmap bitmap2 = selectedFrontFace;
+
+            FirebaseVisionImage image = FirebaseVisionImage.fromBitmap(selectedFrontFace);
 
             float dis=100;
             boolean oneSide = false;
             System.out.println("total iterations "+durationInSec);
             for(int i=0; i<durationInSec-1; i++){
-                Bitmap bitmap = retriever.getFrameAtTime(i*250000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-                Frame frame = new Frame.Builder().setBitmap(bitmap).build();
+//                Bitmap previousBitmap = currentBitmap;
+                currentBitmap = bitmap2;
+                Frame frame = new Frame.Builder().setBitmap(currentBitmap).build();
 
                 SparseArray<Face> faces = detector.detect(frame);
 
-                if(bitmap != null && faces.size()!=0){
+                if(currentBitmap != null && faces.size()!=0){
                     System.out.println("face is detected");
                     Face face = faces.valueAt(0);
                     List<Landmark> landmarks = face.getLandmarks();
@@ -108,7 +129,7 @@ public class RecordingPageActivity extends AppCompatActivity {
                         float diff = Math.abs((noseLandmark - leftFaceLandmark) - (rightLandmark - noseLandmark));
 
                         if (diff < dis) {
-                            selectedFrontFace = bitmap;
+                            selectedFrontFace = currentBitmap;
                             dis = diff;
                         }
                         System.out.println("all 8 landmarks are detected");
@@ -117,12 +138,12 @@ public class RecordingPageActivity extends AppCompatActivity {
                     }
                 }
 
-                Bitmap bitmap2 = retriever.getFrameAtTime((i+1)*250000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+                bitmap2 = retriever.getFrameAtTime((i+1)*250000, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
                 Frame frame2 = new Frame.Builder().setBitmap(bitmap2).build();
 
                 SparseArray<Face> faces2 = detector.detect(frame2);
 
-                if(bitmap != null ){
+                if(currentBitmap != null ){
                     if(faces.size()!=0 && faces2.size()==0 && oneSide){
                         selectedRightFace = bitmap2;
                         System.out.println("right face selected");

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "219201505079",
+    "firebase_url": "https://facedetection-f231c.firebaseio.com",
+    "project_id": "facedetection-f231c",
+    "storage_bucket": "facedetection-f231c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219201505079:android:39408edbde6a4482",
+        "android_client_info": {
+          "package_name": "com.example.michaelhuang.finalproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "219201505079-d2f1lvlln2dnmmm0g1qih49dvosqqqtc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHkP1Nx3_CHOo3ZHWU5ZTDJRs2jxu5iUw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
